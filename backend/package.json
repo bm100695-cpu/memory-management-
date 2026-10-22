@@ -1,0 +1,60 @@
+{
+  "name": "personal-ai-agent-backend",
+  "version": "1.0.0",
+  "description": "Backend for the Personal AI Agent — voice-first assistant with memory, tasks, and automation",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --runInBand --forceExit",
+    "test:watch": "jest --watch",
+    "seed": "node src/utils/seed.js",
+    "lint": "eslint src/"
+  },
+  "keywords": [
+    "ai",
+    "assistant",
+    "personal",
+    "voice",
+    "tasks",
+    "memory"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.3.1",
+    "express-validator": "^7.1.0",
+    "google-auth-library": "^11.3.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.4",
+    "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
+    "openai": "^4.52.7",
+    "uuid": "^10.0.0",
+    "winston": "^3.13.0",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ],
+    "setupFilesAfterEnv": [],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/utils/seed.js"
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JARVIS Companion</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 320px;
+      min-height: 250px;
+      background: #0a0a0f;
+      color: #f1f0ff;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+    }
+    .header {
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header h1 { font-size: 15px; font-weight: 700; }
+    .header p { font-size: 11px; opacity: 0.9; }
+    .content { padding: 14px; }
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #1a1a27;
+      color: #f1f0ff;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: #222235; border-color: rgba(124,58,237,0.4); }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #9333ea);
+      border: none;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .btn-primary:hover { opacity: 0.95; }
+    .status {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-top: 8px;
+      background: rgba(16,185,129,0.1);
+      color: #10b981;
+      display: none;
+      word-break: break-word;
+    }
+    .note {
+      font-size: 11px;
+      color: #9490b0;
+      padding: 8px 0;
+      margin-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>🤖 JARVIS Assistant</h1>
+      <p>Autonomous Browser & Voice Extension</p>
+    </div>
+    <span style="font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 6px;">v2.0</span>
+  </div>
+  <div class="content">
+    <button class="btn btn-primary" id="openJarvisBtn">
+      🎙️ Open JARVIS Voice Dashboard
+    </button>
+    <button class="btn" id="extractBtn">
+      📄 Extract Visible Data & Listings
+    </button>
+    <button class="btn" id="analyzeBtn">
+      🔍 Analyze Form Fields on Page
+    </button>
+    <div id="status" class="status"></div>
+    <p class="note">
+      🔒 100% Safe: JARVIS executes approved browser navigation and verifies all extracted outputs.
+    </p>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
