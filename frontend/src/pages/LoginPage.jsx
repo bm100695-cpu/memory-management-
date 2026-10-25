@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
 import toast from 'react-hot-toast';
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Sparkles, Shield, Cpu, Zap, Mic, Brain } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
@@ -9,6 +10,9 @@ import MemoryManagementLogo from '../components/MemoryManagementLogo';
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login, register, loginWithGoogle, isAuthenticated } = useAuthStore();
+  const { theme } = useThemeStore();
+  const isDark = theme === 'dark';
+
   const [isRegister, setIsRegister] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -64,7 +68,7 @@ export default function LoginPage() {
         if (googleBtnContainerRef.current) {
           try {
             window.google.accounts.id.renderButton(googleBtnContainerRef.current, {
-              theme: 'outline',
+              theme: isDark ? 'filled_black' : 'outline',
               size: 'large',
               width: 380,
               text: 'continue_with',
@@ -82,7 +86,7 @@ export default function LoginPage() {
         document.body.removeChild(script);
       }
     };
-  }, [googleClientId, loginWithGoogle, navigate]);
+  }, [googleClientId, loginWithGoogle, navigate, isDark]);
 
   const handleGoogleClick = () => {
     if (!googleClientId) {
@@ -100,42 +104,34 @@ export default function LoginPage() {
       } else {
         window.google.accounts.id.prompt();
       }
-      return;
+    } else {
+      toast.error('Google Sign-In is still loading. Please try again.');
     }
-
-    toast.error('Google Identity Services is still loading. Please try again.');
   };
 
-  const handleForgotPassword = (e) => {
-    e.preventDefault();
-    toast('Password reset feature is being emailed. Contact admin if you need immediate access.', {
-      icon: '🔑',
-    });
+  const handleForgotPassword = () => {
+    toast('Password reset feature: Please contact support or your system administrator.');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    const email = form.email.trim();
+    const email = form.email.trim().toLowerCase();
     const password = form.password;
 
-    if (!email) {
-      setErrorMessage('Email is required');
-      return;
-    }
-    if (!password) {
-      setErrorMessage('Password is required');
+    if (!email || !password) {
+      setErrorMessage('Please fill in all required fields');
       return;
     }
 
     if (isRegister) {
       if (!form.name.trim()) {
-        setErrorMessage('Full name is required for registration');
+        setErrorMessage('Full name is required');
         return;
       }
       if (password.length < 8) {
-        setErrorMessage('Password must be at least 8 characters long');
+        setErrorMessage('Password must be at least 8 characters');
         return;
       }
       if (!/[A-Z]/.test(password)) {
@@ -171,7 +167,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row overflow-hidden relative">
+    <div
+      className="min-h-screen w-full flex flex-col lg:flex-row overflow-hidden relative"
+      style={{
+        background: isDark ? 'var(--bg-primary)' : '#FFFFFF',
+      }}
+    >
       <style>{`
         @keyframes radar-pulse {
           0% { transform: scale(0.95); opacity: 0.5; }
@@ -210,25 +211,50 @@ export default function LoginPage() {
       </div>
 
       {/* ──────────────────────────────────────────────────────────── */}
-      {/* LEFT PANEL: High-Tech Jarvis Orbital Radar & Neural Branding */}
+      {/* LEFT PANEL: High-Tech Orbital Radar & Memory Core Showcase   */}
       {/* ──────────────────────────────────────────────────────────── */}
       <div
-        className="w-full lg:w-[48%] flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative overflow-hidden select-none"
+        className="w-full lg:w-[48%] flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative overflow-hidden select-none border-b lg:border-b-0 lg:border-r transition-colors duration-200"
         style={{
-          background: 'linear-gradient(145deg, #060b18 0%, #0a1329 50%, #080f21 100%)',
-          color: '#ffffff',
+          background: isDark
+            ? 'linear-gradient(145deg, #060b18 0%, #0a1329 50%, #080f21 100%)'
+            : '#F7F7F8',
+          borderColor: isDark ? '#2e3035' : '#E5E7EB',
+          color: isDark ? '#FFFFFF' : '#202123',
         }}
       >
         {/* Subtle ambient background glow */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-cyan-500/10 blur-[100px] pointer-events-none" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-purple-600/15 blur-[120px] pointer-events-none" />
+        <div
+          className={`absolute -top-32 -left-32 w-96 h-96 rounded-full blur-[100px] pointer-events-none ${
+            isDark ? 'bg-cyan-500/10' : 'bg-blue-500/5'
+          }`}
+        />
+        <div
+          className={`absolute -bottom-32 -right-32 w-96 h-96 rounded-full blur-[120px] pointer-events-none ${
+            isDark ? 'bg-purple-600/15' : 'bg-amber-500/5'
+          }`}
+        />
 
         {/* Top Branding */}
         <div className="relative z-10 flex items-center justify-between">
-          <MemoryManagementLogo size={42} showText textClassName="text-white" />
+          <MemoryManagementLogo
+            size={42}
+            showText
+            textClassName={isDark ? 'text-white' : 'text-[#202123]'}
+          />
 
-          <div className="text-[11px] font-mono tracking-widest text-cyan-400/70 uppercase hidden sm:flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          <div
+            className={`text-[11px] font-mono tracking-widest uppercase hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full border ${
+              isDark
+                ? 'text-cyan-400 bg-cyan-950/40 border-cyan-500/30'
+                : 'text-emerald-700 bg-emerald-50 border-emerald-200'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full animate-pulse ${
+                isDark ? 'bg-cyan-400' : 'bg-emerald-500'
+              }`}
+            />
             SYS // ONLINE
           </div>
         </div>
@@ -238,93 +264,196 @@ export default function LoginPage() {
           <div className="relative w-72 h-72 sm:w-96 sm:h-96 flex items-center justify-center">
             {/* Outermost dotted orbit */}
             <div
-              className="absolute inset-0 rounded-full border border-dashed border-cyan-500/20 orbit-cw-anim"
+              className={`absolute inset-0 rounded-full border border-dashed orbit-cw-anim ${
+                isDark ? 'border-cyan-500/20' : 'border-[#2563EB]/25'
+              }`}
               style={{ borderSpacing: '6px' }}
             >
               {/* Orbital Satellite 1 */}
-              <div className="absolute top-4 left-1/4 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+              <div
+                className={`absolute top-4 left-1/4 w-2 h-2 rounded-full ${
+                  isDark
+                    ? 'bg-cyan-400 shadow-[0_0_8px_#22d3ee]'
+                    : 'bg-[#2563EB] shadow-[0_0_8px_rgba(37,99,235,0.6)]'
+                }`}
+              />
             </div>
 
             {/* Middle Thin Solid Orbit */}
-            <div className="absolute inset-8 sm:inset-10 rounded-full border border-cyan-500/30 orbit-ccw-anim">
+            <div
+              className={`absolute inset-8 sm:inset-10 rounded-full border orbit-ccw-anim ${
+                isDark ? 'border-cyan-500/30' : 'border-[#CBD5E1]'
+              }`}
+            >
               {/* Orbital Satellite 2 */}
-              <div className="absolute bottom-6 right-10 w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_12px_#f59e0b]" />
+              <div
+                className={`absolute bottom-6 right-10 w-2.5 h-2.5 rounded-full ${
+                  isDark
+                    ? 'bg-amber-400 shadow-[0_0_12px_#f59e0b]'
+                    : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]'
+                }`}
+              />
               {/* Coordinate notch */}
-              <div className="absolute top-1/2 -left-1 w-2 h-0.5 bg-cyan-400/80" />
-              <div className="absolute top-1/2 -right-1 w-2 h-0.5 bg-cyan-400/80" />
+              <div
+                className={`absolute top-1/2 -left-1 w-2 h-0.5 ${
+                  isDark ? 'bg-cyan-400/80' : 'bg-[#2563EB]'
+                }`}
+              />
+              <div
+                className={`absolute top-1/2 -right-1 w-2 h-0.5 ${
+                  isDark ? 'bg-cyan-400/80' : 'bg-[#2563EB]'
+                }`}
+              />
             </div>
 
             {/* Inner Ring (Pulsing) */}
-            <div className="absolute inset-20 sm:inset-24 rounded-full border border-cyan-400/40 radar-pulse-anim">
-              <div className="absolute top-3 right-6 w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_6px_#67e8f9]" />
+            <div
+              className={`absolute inset-20 sm:inset-24 rounded-full border radar-pulse-anim ${
+                isDark ? 'border-cyan-400/40' : 'border-[#2563EB]/30'
+              }`}
+            >
+              <div
+                className={`absolute top-3 right-6 w-1.5 h-1.5 rounded-full ${
+                  isDark
+                    ? 'bg-cyan-300 shadow-[0_0_6px_#67e8f9]'
+                    : 'bg-[#2563EB] shadow-[0_0_6px_rgba(37,99,235,0.5)]'
+                }`}
+              />
             </div>
 
             {/* Central Memory Chip Core */}
             <div className="relative flex items-center justify-center">
               {/* Expanding acoustic wave ping */}
-              <div className="absolute w-20 h-20 rounded-full bg-cyan-400/25 ping-slow-anim" />
+              <div
+                className={`absolute w-20 h-20 rounded-full ping-slow-anim ${
+                  isDark ? 'bg-cyan-400/25' : 'bg-blue-400/20'
+                }`}
+              />
 
               {/* Glowing Aura */}
-              <div className="absolute w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-500 to-amber-500 blur-lg opacity-70" />
+              <div
+                className={`absolute w-20 h-20 rounded-full blur-lg opacity-70 ${
+                  isDark
+                    ? 'bg-gradient-to-tr from-cyan-500 to-amber-500'
+                    : 'bg-gradient-to-tr from-blue-400 to-amber-300'
+                }`}
+              />
 
               {/* Memory Chip */}
-              <div className="relative z-10 drop-shadow-[0_0_20px_rgba(28,93,153,0.8)]">
+              <div
+                className={`relative z-10 ${
+                  isDark
+                    ? 'drop-shadow-[0_0_20px_rgba(28,93,153,0.8)]'
+                    : 'drop-shadow-[0_4px_12px_rgba(37,99,235,0.2)]'
+                }`}
+              >
                 <MemoryManagementLogo size={68} />
               </div>
             </div>
 
             {/* Decorative crosshairs / axis lines */}
-            <div className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent pointer-events-none" />
-            <div className="absolute h-full w-[1px] bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent pointer-events-none" />
+            <div
+              className={`absolute w-full h-[1px] pointer-events-none ${
+                isDark
+                  ? 'bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent'
+                  : 'bg-gradient-to-r from-transparent via-blue-500/15 to-transparent'
+              }`}
+            />
+            <div
+              className={`absolute h-full w-[1px] pointer-events-none ${
+                isDark
+                  ? 'bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent'
+                  : 'bg-gradient-to-b from-transparent via-blue-500/15 to-transparent'
+              }`}
+            />
           </div>
         </div>
 
         {/* Bottom Hero Copy */}
         <div className="relative z-10 flex flex-col gap-3">
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+          <h2
+            className={`text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight ${
+              isDark ? 'text-white' : 'text-[#202123]'
+            }`}
+          >
             One assistant that <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-300 to-amber-300">
+            <span
+              className={
+                isDark
+                  ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-300 to-amber-300'
+                  : 'text-[#2563EB]'
+              }
+            >
               remembers your day.
             </span>
           </h2>
-          <p className="text-sm sm:text-base text-slate-300 max-w-md leading-relaxed">
+          <p
+            className={`text-sm sm:text-base max-w-md leading-relaxed ${
+              isDark ? 'text-slate-300' : 'text-[#6B7280]'
+            }`}
+          >
             Talk to it, give it tasks, and pick up where you left off.
           </p>
 
-          <div className="flex flex-wrap items-center gap-2 pt-2 text-[11px] font-medium text-slate-400">
-            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-1.5">
-              <Mic size={12} className="text-cyan-400" /> Voice & Continuous Audio
+          <div className="flex flex-wrap items-center gap-2 pt-2 text-[11px] font-medium">
+            <span
+              className={`px-3 py-1.5 rounded-full border flex items-center gap-1.5 ${
+                isDark
+                  ? 'bg-white/5 border-white/10 text-slate-300'
+                  : 'bg-white border-[#E5E7EB] text-[#202123] shadow-xs'
+              }`}
+            >
+              <Mic size={13} className="text-[#2563EB]" /> Voice & Continuous Audio
             </span>
-            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-1.5">
-              <Brain size={12} className="text-purple-400" /> Connected Memory
+            <span
+              className={`px-3 py-1.5 rounded-full border flex items-center gap-1.5 ${
+                isDark
+                  ? 'bg-white/5 border-white/10 text-slate-300'
+                  : 'bg-white border-[#E5E7EB] text-[#202123] shadow-xs'
+              }`}
+            >
+              <Brain size={13} className="text-[#2563EB]" /> Connected Memory
             </span>
-            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-1.5">
-              <Zap size={12} className="text-amber-400" /> Autonomous Browser
+            <span
+              className={`px-3 py-1.5 rounded-full border flex items-center gap-1.5 ${
+                isDark
+                  ? 'bg-white/5 border-white/10 text-slate-300'
+                  : 'bg-white border-[#E5E7EB] text-[#202123] shadow-xs'
+              }`}
+            >
+              <Zap size={13} className="text-amber-500" /> Autonomous Browser
             </span>
           </div>
         </div>
       </div>
 
       {/* ──────────────────────────────────────────────────────────── */}
-      {/* RIGHT PANEL: Modern Seamless Authentication Form             */}
+      {/* RIGHT PANEL: Clean Modern ChatGPT Light Auth Form            */}
       {/* ──────────────────────────────────────────────────────────── */}
       <div
         className="w-full lg:w-[52%] flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative overflow-y-auto"
         style={{
-          background: 'var(--bg-secondary)',
-          color: 'var(--text-primary)',
+          background: isDark ? 'var(--bg-primary)' : '#FFFFFF',
+          color: isDark ? '#FFFFFF' : '#202123',
         }}
       >
         <div className="w-full max-w-md mx-auto my-auto flex flex-col gap-6 animate-fade-in">
           {/* Header */}
           <div className="flex flex-col gap-2">
             <div className="lg:hidden mb-2">
-              <MemoryManagementLogo size={36} showText />
+              <MemoryManagementLogo
+                size={36}
+                showText
+                textClassName={isDark ? 'text-white' : 'text-[#202123]'}
+              />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            <h1
+              className="text-2xl sm:text-3xl font-bold tracking-tight"
+              style={{ color: isDark ? '#FFFFFF' : '#202123' }}
+            >
               {isRegister ? 'Create an account' : 'Welcome back'}
             </h1>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
               {isRegister
                 ? 'Sign up to start with Memory Management.'
                 : 'Sign in to continue with Memory Management.'}
@@ -336,12 +465,11 @@ export default function LoginPage() {
             type="button"
             onClick={handleGoogleClick}
             disabled={loading}
-            className="w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-3 transition-all duration-200 border cursor-pointer shadow-sm hover:opacity-95"
-            style={{
-              background: 'var(--bg-card)',
-              borderColor: 'var(--border-subtle)',
-              color: 'var(--text-primary)',
-            }}
+            className={`w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-3 transition-all duration-200 border cursor-pointer shadow-xs ${
+              isDark
+                ? 'bg-[#1e1f22] border-[#2e3035] text-white hover:bg-[#2b2d31]'
+                : 'bg-white border-[#E5E7EB] text-[#202123] hover:bg-[#F7F7F8]'
+            }`}
           >
             <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
               <path
@@ -369,17 +497,26 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-1">
-            <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
-            <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+            <div
+              className="flex-1 h-px"
+              style={{ background: isDark ? '#2e3035' : '#E5E7EB' }}
+            />
+            <span
+              className="text-xs uppercase tracking-wider font-medium"
+              style={{ color: isDark ? '#6B7280' : '#9CA3AF' }}
+            >
               or use your email
             </span>
-            <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
+            <div
+              className="flex-1 h-px"
+              style={{ background: isDark ? '#2e3035' : '#E5E7EB' }}
+            />
           </div>
 
           {/* Tabs: Log in / Create account */}
           <div
             className="flex border-b"
-            style={{ borderColor: 'var(--border-subtle)' }}
+            style={{ borderColor: isDark ? '#2e3035' : '#E5E7EB' }}
           >
             <button
               type="button"
@@ -391,14 +528,20 @@ export default function LoginPage() {
                 !isRegister ? 'font-bold' : 'hover:opacity-80'
               }`}
               style={{
-                color: !isRegister ? 'var(--text-primary)' : 'var(--text-muted)',
+                color: !isRegister
+                  ? isDark
+                    ? '#FFFFFF'
+                    : '#202123'
+                  : isDark
+                  ? '#6B7280'
+                  : '#9CA3AF',
               }}
             >
               Log in
               {!isRegister && (
                 <span
                   className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-                  style={{ background: 'var(--text-primary)' }}
+                  style={{ background: '#2563EB' }}
                 />
               )}
             </button>
@@ -413,14 +556,20 @@ export default function LoginPage() {
                 isRegister ? 'font-bold' : 'hover:opacity-80'
               }`}
               style={{
-                color: isRegister ? 'var(--text-primary)' : 'var(--text-muted)',
+                color: isRegister
+                  ? isDark
+                    ? '#FFFFFF'
+                    : '#202123'
+                  : isDark
+                  ? '#6B7280'
+                  : '#9CA3AF',
               }}
             >
               Create account
               {isRegister && (
                 <span
                   className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-                  style={{ background: 'var(--text-primary)' }}
+                  style={{ background: '#2563EB' }}
                 />
               )}
             </button>
@@ -428,7 +577,7 @@ export default function LoginPage() {
 
           {/* Error Banner */}
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
               <span>{errorMessage}</span>
             </div>
@@ -438,19 +587,27 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {isRegister && (
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                <label
+                  className="text-xs font-semibold"
+                  style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}
+                >
                   Full Name
                 </label>
                 <div className="relative">
                   <User
                     size={16}
                     className="absolute left-3.5 top-1/2 -translate-y-1/2"
-                    style={{ color: 'var(--text-muted)' }}
+                    style={{ color: isDark ? '#6B7280' : '#9CA3AF' }}
                   />
                   <input
                     type="text"
-                    className="input pl-10"
-                    placeholder="e.g. Tony Stark"
+                    className="w-full py-2.5 pl-10 pr-3 rounded-xl border text-sm transition-all outline-none"
+                    style={{
+                      background: isDark ? '#1e1f22' : '#FFFFFF',
+                      borderColor: isDark ? '#2e3035' : '#E5E7EB',
+                      color: isDark ? '#FFFFFF' : '#202123',
+                    }}
+                    placeholder="e.g. Brijesh Mishra"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     required={isRegister}
@@ -460,18 +617,26 @@ export default function LoginPage() {
             )}
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+              <label
+                className="text-xs font-semibold"
+                style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}
+              >
                 Email
               </label>
               <div className="relative">
                 <Mail
                   size={16}
                   className="absolute left-3.5 top-1/2 -translate-y-1/2"
-                  style={{ color: 'var(--text-muted)' }}
+                  style={{ color: isDark ? '#6B7280' : '#9CA3AF' }}
                 />
                 <input
                   type="email"
-                  className="input pl-10"
+                  className="w-full py-2.5 pl-10 pr-3 rounded-xl border text-sm transition-all outline-none"
+                  style={{
+                    background: isDark ? '#1e1f22' : '#FFFFFF',
+                    borderColor: isDark ? '#2e3035' : '#E5E7EB',
+                    color: isDark ? '#FFFFFF' : '#202123',
+                  }}
                   placeholder="you@example.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -482,15 +647,17 @@ export default function LoginPage() {
 
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                <label
+                  className="text-xs font-semibold"
+                  style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}
+                >
                   Password
                 </label>
                 {!isRegister && (
                   <button
                     type="button"
                     onClick={handleForgotPassword}
-                    className="text-xs hover:underline cursor-pointer"
-                    style={{ color: 'var(--text-secondary)' }}
+                    className="text-xs hover:underline cursor-pointer text-[#2563EB]"
                   >
                     Forgot password?
                   </button>
@@ -500,12 +667,21 @@ export default function LoginPage() {
                 <Lock
                   size={16}
                   className="absolute left-3.5 top-1/2 -translate-y-1/2"
-                  style={{ color: 'var(--text-muted)' }}
+                  style={{ color: isDark ? '#6B7280' : '#9CA3AF' }}
                 />
                 <input
                   type={showPass ? 'text' : 'password'}
-                  className="input pl-10 pr-16"
-                  placeholder={isRegister ? 'At least 8 characters (1 uppercase, 1 digit)' : 'At least 8 characters'}
+                  className="w-full py-2.5 pl-10 pr-16 rounded-xl border text-sm transition-all outline-none"
+                  style={{
+                    background: isDark ? '#1e1f22' : '#FFFFFF',
+                    borderColor: isDark ? '#2e3035' : '#E5E7EB',
+                    color: isDark ? '#FFFFFF' : '#202123',
+                  }}
+                  placeholder={
+                    isRegister
+                      ? 'At least 8 characters (1 uppercase, 1 digit)'
+                      : 'Enter your password'
+                  }
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   required
@@ -514,7 +690,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPass(!showPass)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold hover:opacity-80 cursor-pointer"
-                  style={{ color: 'var(--text-secondary)' }}
+                  style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}
                 >
                   {showPass ? 'Hide' : 'Show'}
                 </button>
@@ -523,11 +699,19 @@ export default function LoginPage() {
 
             {isRegister && (
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                <label
+                  className="text-xs font-semibold"
+                  style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}
+                >
                   Preferred Language
                 </label>
                 <select
-                  className="input"
+                  className="w-full py-2.5 px-3 rounded-xl border text-sm transition-all outline-none"
+                  style={{
+                    background: isDark ? '#1e1f22' : '#FFFFFF',
+                    borderColor: isDark ? '#2e3035' : '#E5E7EB',
+                    color: isDark ? '#FFFFFF' : '#202123',
+                  }}
                   value={form.preferredLanguage}
                   onChange={(e) => setForm({ ...form, preferredLanguage: e.target.value })}
                 >
@@ -538,22 +722,17 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Submit Button */}
+            {/* Primary Submit Button: Clean Blue */}
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full py-3.5 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 shadow-md"
-              style={{
-                background: 'linear-gradient(135deg, #0f172a, #1e293b)',
-                color: '#ffffff',
-                border: '1px solid rgba(255,255,255,0.1)',
-              }}
+              className="mt-2 w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all duration-150 shadow-xs text-white bg-[#2563EB] hover:bg-[#1D4ED8]"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>{isRegister ? 'Create account' : 'Sign in'}</span>
+                  <span>{isRegister ? 'Create account' : 'Sign In'}</span>
                   <ArrowRight size={16} />
                 </>
               )}
@@ -562,7 +741,10 @@ export default function LoginPage() {
         </div>
 
         {/* Footer info note */}
-        <div className="w-full max-w-md mx-auto pt-6 text-center text-xs" style={{ color: 'var(--text-muted)' }}>
+        <div
+          className="w-full max-w-md mx-auto pt-6 text-center text-xs"
+          style={{ color: isDark ? '#6B7280' : '#9CA3AF' }}
+        >
           Voice, memory and tasks, all in one place.
         </div>
       </div>

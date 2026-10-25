@@ -98,10 +98,10 @@ export default function MemoryManagementLogo({
       {/* Typography Label */}
       {showText && (
         <div className={`flex flex-col leading-tight ${textClassName}`}>
-          <span className="font-bold tracking-tight text-lg sm:text-xl" style={{ color: 'var(--text-primary)' }}>
+          <span className="font-bold tracking-tight text-lg sm:text-xl">
             Memory
           </span>
-          <span className="font-semibold text-base sm:text-lg opacity-90" style={{ color: 'var(--text-primary)' }}>
+          <span className="font-semibold text-base sm:text-lg opacity-90">
             Management
           </span>
         </div>
