@@ -47,7 +47,7 @@ export default function Sidebar() {
 
   const handleNewChat = () => {
     navigate('/chat');
-    window.dispatchEvent(new CustomEvent('jarvis-new-chat'));
+    window.dispatchEvent(new CustomEvent('memory-management-new-chat'));
     setMobileOpen(false);
   };
 

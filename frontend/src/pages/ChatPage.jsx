@@ -129,8 +129,8 @@ export default function ChatPage() {
     const handleNewChatEvent = () => {
       startNewChat();
     };
-    window.addEventListener('jarvis-new-chat', handleNewChatEvent);
-    return () => window.removeEventListener('jarvis-new-chat', handleNewChatEvent);
+    window.addEventListener('memory-management-new-chat', handleNewChatEvent);
+    return () => window.removeEventListener('memory-management-new-chat', handleNewChatEvent);
   }, []);
 
   useEffect(() => {
