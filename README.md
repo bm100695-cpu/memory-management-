@@ -28,12 +28,6 @@ A voice-first, full-stack personal AI assistant and memory management system sup
   - Category indexing (`personal`, `preference`, `goal`, `project`, `decision`, `fact`, `contact`).
   - Strict secret sanitization redacting passwords, API keys, and connection strings.
 
-- **💬 ChatGPT-Inspired Clean UI:**
-  - Pure white conversation canvas (`#FFFFFF`) with centered welcome hero (*"What's on your mind today?"*).
-  - Off-white sidebar (`#F7F7F8`) with subtle borders (`#E5E7EB`) and "+ New Chat" button.
-  - Teal avatar badge (`#0F766E`) with white initials.
-  - Modern rounded chat input bar with a distinct blue voice input button (`#2563EB`).
-  - Seamless toggle between daytime White Mode and eye-friendly Night Mode.
 
 - **🎙️ Continuous Multi-Lingual Voice:**
   - Hands-free continuous listening in Hindi (हिंदी), English, and Hinglish.
