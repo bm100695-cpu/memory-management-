@@ -3,14 +3,14 @@ import { create } from 'zustand';
 const THEME_KEY = 'jarvis_theme';
 
 const getInitialTheme = () => {
-  if (typeof window === 'undefined') return 'dark';
+  if (typeof window === 'undefined') return 'light';
   try {
     const saved = localStorage.getItem(THEME_KEY);
     if (saved === 'light' || saved === 'dark') return saved;
   } catch (e) {
     // ignore
   }
-  return 'dark';
+  return 'light';
 };
 
 const applyThemeToDOM = (theme) => {

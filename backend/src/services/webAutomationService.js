@@ -182,7 +182,7 @@ const resolveWebIntent = async (userInstruction, lang = 'en', geminiRunner = nul
   // 2. Dynamic resolution using Gemini if available
   if (geminiRunner && env.GOOGLE_AI_API_KEY) {
     try {
-      const systemPrompt = `You are the JARVIS Autonomous Web & Navigation Engine.
+      const systemPrompt = `You are the Memory Management Autonomous Web & Navigation Engine.
 Given ANY natural language command, identify the intended website, URL, or web search dynamically.
 Support ANY website or topic in the world. DO NOT restrict to fixed websites.
 
@@ -363,7 +363,7 @@ const summarizeWebResearch = async (url, title, rawText, userQuery, lang = 'en',
 
   if (geminiRunner && env.GOOGLE_AI_API_KEY) {
     try {
-      const prompt = `You are JARVIS, an advanced personal AI researcher.
+      const prompt = `You are Memory Management, an advanced personal AI researcher.
 Summarize the following website content in response to the user's inquiry: "${userQuery}".
 Language: ${lang === 'hi' ? 'Hindi' : lang === 'hinglish' ? 'Hinglish' : 'English'}.
 

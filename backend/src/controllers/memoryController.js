@@ -11,9 +11,10 @@ const createMemory = async (req, res, next) => {
 
 const getMemories = async (req, res, next) => {
   try {
-    const { category, tags, search, page, limit, includeArchived } = req.query;
+    const { category, topic, tags, search, page, limit, includeArchived } = req.query;
     const result = await memoryService.getMemories(req.user._id, {
       category,
+      topic,
       tags: tags ? tags.split(',') : undefined,
       search,
       page: parseInt(page) || 1,

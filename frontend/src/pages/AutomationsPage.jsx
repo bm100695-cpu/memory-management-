@@ -118,7 +118,7 @@ export default function AutomationsPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
-            <Cpu className="w-7 h-7 text-cyan-400" />
+            <Cpu className="w-7 h-7 text-[#2563EB]" />
             Automations & Browser Assistant
           </h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
@@ -136,13 +136,10 @@ export default function AutomationsPage() {
       </div>
 
       {/* Chrome Extension Status Banner */}
-      <div className="card mb-6 border-blue-500/30"
-        style={{
-          background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08))',
-        }}>
+      <div className="card mb-6 border-[#E5E7EB] bg-blue-50/40">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-blue-500/15 border border-blue-500/25 flex items-center justify-center text-blue-400 shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#2563EB] shrink-0">
               <Globe className="w-6 h-6" />
             </div>
             <div>
@@ -158,7 +155,7 @@ export default function AutomationsPage() {
           <div className="flex items-center gap-2 shrink-0">
             <div className="text-right hidden sm:block">
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Autonomous Safeguard</p>
-              <p className="text-xs font-semibold text-emerald-500">Verified Output Verification</p>
+              <p className="text-xs font-semibold text-emerald-600">Verified Output Verification</p>
             </div>
           </div>
         </div>
@@ -241,12 +238,13 @@ export default function AutomationsPage() {
 
       {/* New Task Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-          style={{ background: 'var(--modal-overlay)' }}>
-          <div className="card max-w-lg w-full p-6 animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs animate-fade-in"
+          style={{ background: 'rgba(32, 33, 35, 0.45)' }}>
+          <div className="card max-w-lg w-full p-6 animate-fade-in shadow-2xl border"
+            style={{ borderColor: 'var(--border-subtle)' }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                <Cpu className="w-5 h-5 text-cyan-400" /> Plan & Execute Automation Task
+                <Cpu className="w-5 h-5 text-[#2563EB]" /> Plan & Execute Automation Task
               </h2>
               <button onClick={() => setModalOpen(false)} className="btn-icon">
                 <X size={18} />
@@ -272,21 +270,21 @@ export default function AutomationsPage() {
                 <button
                   type="button"
                   onClick={() => setNewTask({ title: 'Open YouTube', description: '' })}
-                  className="px-2 py-0.5 rounded text-[11px] border border-purple-500/30 text-purple-300 hover:border-purple-400 cursor-pointer"
+                  className="px-2 py-0.5 rounded-lg text-[11px] border border-[#E5E7EB] bg-white text-[#202123] hover:bg-[#F0F1F3] cursor-pointer transition-colors"
                 >
                   🌐 Open YouTube
                 </button>
                 <button
                   type="button"
                   onClick={() => setNewTask({ title: 'Find official login page for Spotify', description: 'Validate safe URL' })}
-                  className="px-2 py-0.5 rounded text-[11px] border border-purple-500/30 text-purple-300 hover:border-purple-400 cursor-pointer"
+                  className="px-2 py-0.5 rounded-lg text-[11px] border border-[#E5E7EB] bg-white text-[#202123] hover:bg-[#F0F1F3] cursor-pointer transition-colors"
                 >
                   🔐 Find Spotify Login
                 </button>
                 <button
                   type="button"
                   onClick={() => setNewTask({ title: 'Find websites to practice DSA', description: 'Compare top platforms' })}
-                  className="px-2 py-0.5 rounded text-[11px] border border-emerald-500/30 text-emerald-300 hover:border-emerald-400 cursor-pointer"
+                  className="px-2 py-0.5 rounded-lg text-[11px] border border-[#E5E7EB] bg-white text-[#202123] hover:bg-[#F0F1F3] cursor-pointer transition-colors"
                 >
                   💻 Practice DSA Sites
                 </button>

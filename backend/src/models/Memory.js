@@ -8,6 +8,22 @@ const memorySchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    title: {
+      type: String,
+      trim: true,
+      maxlength: [200, 'Memory title too long'],
+    },
+    topic: {
+      type: String,
+      trim: true,
+      maxlength: [100, 'Topic too long'],
+      index: true,
+    },
+    conversation: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Conversation',
+      index: true,
+    },
     content: {
       type: String,
       required: [true, 'Memory content is required'],
@@ -58,11 +74,12 @@ const memorySchema = new mongoose.Schema(
 
 // Indexes for common queries
 memorySchema.index({ user: 1, category: 1 });
+memorySchema.index({ user: 1, topic: 1 });
 memorySchema.index({ user: 1, tags: 1 });
 memorySchema.index({ user: 1, createdAt: -1 });
 memorySchema.index({ user: 1, isArchived: 1 });
 
 // Text search index
-memorySchema.index({ content: 'text', tags: 'text' });
+memorySchema.index({ title: 'text', content: 'text', topic: 'text', tags: 'text' });
 
 module.exports = mongoose.model('Memory', memorySchema);

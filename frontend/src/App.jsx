@@ -47,7 +47,7 @@ function RequireAuth({ children }) {
             style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))' }}>
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           </div>
-          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Loading JARVIS...</p>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Loading Memory Management...</p>
         </div>
       </div>
     );

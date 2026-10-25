@@ -73,6 +73,17 @@ const detectLanguage = (text = '') => {
   return 'en';
 };
 
+const detectTopic = (text) => {
+  if (!text) return null;
+  const match = text.match(
+    /(?:continue|work\s+on|about|regarding|task\s+on|project\s+on|details\s+of)\s+(?:the\s+)?([a-zA-Z0-9\s_-]{3,40})(?:\s+from|\s+work|\s+feature|\s+task|\s+project|\?|$)/i
+  );
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  return null;
+};
+
 const parseIntent = (text) => {
   const lower = text.toLowerCase().trim();
   if (/(?:add task|new task|create task|task add|task banao|remind me to|kaam add karo|task:)\s*(.+)/i.test(lower)) {
@@ -123,6 +134,7 @@ const handleMessage = async (userId, content, conversationId = null, activeTaskI
   let toolResult = null;
   let taskExecution = null;
   let taskSteps = [];
+  let retrievedMemories = [];
 
   // Dynamically detect any website opening, web searching, URL navigation, form filling, or research command
   const isAutomationIntent =
@@ -156,6 +168,93 @@ const handleMessage = async (userId, content, conversationId = null, activeTaskI
     const aiProvider = env.AI_PROVIDER || 'gemini';
     const geminiKey = env.GOOGLE_AI_API_KEY;
 
+    // Detect topic and fetch relevant memories, past conversations, and recent messages
+    const detectedTopic = detectTopic(content);
+    if (detectedTopic && !conversation.topics?.includes(detectedTopic.toLowerCase())) {
+      conversation.topics = conversation.topics || [];
+      conversation.topics.push(detectedTopic.toLowerCase());
+    }
+
+    // Explicit memory intent: save immediately so it's guaranteed stored in MongoDB!
+    let explicitlySavedMemory = null;
+    if (intent.type === 'SAVE_MEMORY') {
+      try {
+        explicitlySavedMemory = await memoryService.createMemory(userId, {
+          title: intent.content.slice(0, 50),
+          content: intent.content,
+          category: 'personal',
+          tags: ['explicit-memory', 'voice-chat'],
+          source: 'user_explicit',
+          conversation: conversation._id,
+          importance: 5,
+        });
+        logger.info(`Explicitly saved memory: ${explicitlySavedMemory._id}`);
+      } catch (saveErr) {
+        logger.warn(`Failed to explicitly save memory: ${saveErr.message}`);
+      }
+    }
+
+    const [memories, pastConversations, recentMessages] = await Promise.all([
+      memoryService.retrieveRelevantMemories(userId, content, { topic: detectedTopic, limit: 6 }),
+      memoryService.retrieveRelevantConversations(userId, {
+        currentConversationId: conversation._id,
+        query: content,
+        topic: detectedTopic,
+        limit: 3,
+      }),
+      Message.find({ conversation: conversation._id, isDeleted: false })
+        .sort({ createdAt: -1 })
+        .limit(8)
+        .lean(),
+    ]);
+
+    retrievedMemories = memories;
+    if (explicitlySavedMemory && !retrievedMemories.some((m) => String(m._id) === String(explicitlySavedMemory._id))) {
+      retrievedMemories.unshift(explicitlySavedMemory);
+    }
+
+    const memoryContext = retrievedMemories
+      .map((m) => `- [${(m.category || 'other').toUpperCase()}] ${m.title ? `${m.title}: ` : ''}${m.content}`)
+      .join('\n');
+
+    const pastConvContext = pastConversations
+      .map((c) => {
+        const dateStr = c.lastMessageAt ? new Date(c.lastMessageAt).toLocaleDateString() : '';
+        const summaryText = c.summary ? `Summary: ${c.summary}\n` : '';
+        const recentDialogue = (c.messages || []).slice(-4).join('\n  ');
+        return `• Prior Conversation "${c.title}" (${dateStr}):\n  ${summaryText}${recentDialogue ? `Discussion:\n  ${recentDialogue}` : ''}`;
+      })
+      .join('\n\n');
+
+    const recentChatTurns = recentMessages
+      .reverse()
+      .map((m) => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
+      .join('\n');
+
+    const explicitMemoryNote = explicitlySavedMemory
+      ? `\nNOTE: The user explicitly asked to remember: "${explicitlySavedMemory.content}". This has ALREADY been saved to permanent memory. Acknowledge this cleanly and warmly.`
+      : '';
+
+    const systemPrompt = `You are Memory Management, a highly intelligent and personal AI assistant.
+Your personality is professional, proactive, smart, and warm. 
+The user speaks in ${language === 'hi' ? 'Hindi' : language === 'hinglish' ? 'Hinglish' : 'English'}. You MUST reply in the exact same language naturally.
+Give detailed, accurate, and smart answers. DO NOT give generic robotic responses.
+
+CRITICAL MEMORY & CONVERSATION GROUNDING RULES:
+1. When the user returns to a previous topic or asks to continue work (e.g. "Continue the browser automation work from yesterday"), utilize the previous discussion, requirements, completed work, and pending steps provided below without asking the user to explain everything again.
+2. Ground all answers strictly in facts from the context. Never invent previous discussions or claim a task is completed without evidence.
+3. If multiple past topics match ambiguously, ask a short polite clarification.
+${explicitMemoryNote}
+
+User Stored Memories:
+${memoryContext || 'No stored memories yet.'}
+
+Previous Conversations on Related Topics:
+${pastConvContext || 'No previous conversation history found for this topic.'}
+
+Recent Conversation History:
+${recentChatTurns || 'New conversation started.'}`;
+
     if (aiProvider === 'gemini') {
       if (!geminiKey) {
         logger.error('Gemini API key is missing in configuration.');
@@ -168,17 +267,6 @@ const handleMessage = async (userId, content, conversationId = null, activeTaskI
         }
       } else {
         try {
-          const searchRes = await memoryService.getMemories(userId, { limit: 5 });
-          const memoryContext = searchRes.memories.map((m) => `- ${m.content} [${m.category}]`).join('\n');
-
-          const systemPrompt = `You are JARVIS, a highly intelligent and personal AI assistant.
-Your personality is professional, proactive, smart, and warm. 
-The user speaks in ${language === 'hi' ? 'Hindi' : language === 'hinglish' ? 'Hinglish' : 'English'}. You MUST reply in the exact same language naturally.
-Give detailed, accurate, and smart answers. DO NOT give generic robotic responses.
-
-User Memories in Context:
-${memoryContext || 'No stored memories yet.'}`;
-
           const candidateModels = [
             env.GOOGLE_AI_MODEL || 'gemini-3.5-flash',
             'gemini-3.5-flash-lite',
@@ -186,7 +274,6 @@ ${memoryContext || 'No stored memories yet.'}`;
             'gemini-3.1-flash-lite',
             'gemini-3.8-flash',
           ];
-          // Remove duplicates
           const uniqueModels = [...new Set(candidateModels)];
 
           let lastError = null;
@@ -201,7 +288,6 @@ ${memoryContext || 'No stored memories yet.'}`;
               if (modelErr.status === 429) {
                 anyQuotaExceeded = true;
               }
-              // If quota exceeded (429), high demand (503), or not found (404), try next candidate model
               if (modelErr.status === 429 || modelErr.status === 503 || modelErr.status === 404) {
                 logger.warn(`Gemini model ${modelName} returned HTTP ${modelErr.status} (${modelErr.message}). Attempting alternate model...`);
                 continue;
@@ -214,12 +300,16 @@ ${memoryContext || 'No stored memories yet.'}`;
           if (!assistantReply && lastError) {
             if (anyQuotaExceeded || lastError.status === 429) {
               logger.error('All Gemini free tier candidate models exceeded daily quota limit.');
-              assistantReply =
-                language === 'hi'
-                  ? `⚠️ आपके Google Gemini Free Tier का दैनिक कोटा समाप्त हो गया है (20 अनुरोध/दिन)।\n\nकृपया https://aistudio.google.com/ से नई API key प्राप्त करें और 'backend/.env' में अपडेट करें, या बिलिंग सक्षम करें। स्थानीय कार्य और ब्राउज़र ऑटोमेशन अभी भी सक्रिय हैं।`
-                  : language === 'hinglish'
-                  ? `⚠️ Aapke Google Gemini Free Tier ka daily quota exceed ho gaya hai (limit: 20 requests/day).\n\nIse continue rakhne ke liye https://aistudio.google.com/ par jaakar nayi API key generate karein aur 'backend/.env' me update karein, ya billing activate karein. Aapke local tasks aur browser tools abhi bhi chalu hain!`
-                  : `⚠️ Google Gemini Free Tier daily quota has been exceeded for your API key (limit: 20 requests/day).\n\nTo continue chatting, please generate a new free key at https://aistudio.google.com/ and update \`GOOGLE_AI_API_KEY\` in \`backend/.env\`, or enable pay-as-you-go billing. Local tasks and browser automation remain available.`;
+              if (intent.type !== 'CHAT') {
+                assistantReply = await executeLocalIntent(userId, intent, content, language);
+              } else {
+                assistantReply =
+                  language === 'hi'
+                    ? `⚠️ आपके Google Gemini Free Tier का दैनिक कोटा समाप्त हो गया है। कृपया नई API key प्रदान करें।`
+                    : language === 'hinglish'
+                    ? `⚠️ Aapke Google Gemini Free Tier ka daily quota exceed ho gaya hai. Local memory aur tasks abhi bhi save hain.`
+                    : `⚠️ Google Gemini Free Tier daily quota has been exceeded. Local memory and tasks remain active.`;
+              }
             } else {
               throw lastError;
             }
@@ -227,15 +317,14 @@ ${memoryContext || 'No stored memories yet.'}`;
         } catch (err) {
           logger.error(`Gemini request failed: HTTP ${err.status || err.statusCode || 500} - ${err.message}`);
           if (intent.type !== 'CHAT') {
-            // Keep local task/memory fallback for intentional local commands
             assistantReply = await executeLocalIntent(userId, intent, content, language);
           } else if (err.status === 429 || err.statusCode === 429) {
             assistantReply =
               language === 'hi'
-                ? `⚠️ आपके Google Gemini Free Tier का दैनिक कोटा समाप्त हो गया है (20 अनुरोध/दिन)। कृपया https://aistudio.google.com/ से नई API key प्राप्त करके 'backend/.env' में अपडेट करें।`
+                ? `⚠️ आपके Google Gemini Free Tier का दैनिक कोटा समाप्त हो गया है।`
                 : language === 'hinglish'
-                ? `⚠️ Aapke Google Gemini Free Tier ka daily quota exceed ho gaya hai (limit: 20 requests/day). Kripya https://aistudio.google.com/ se nayi API key generate karke 'backend/.env' me update karein.`
-                : `⚠️ Google Gemini Free Tier daily quota has been exceeded for your API key (limit: 20 requests/day). Please generate a new free key at https://aistudio.google.com/ and update 'backend/.env'.`;
+                ? `⚠️ Aapke Google Gemini Free Tier ka daily quota exceed ho gaya hai.`
+                : `⚠️ Google Gemini Free Tier daily quota has been exceeded for your API key.`;
           } else {
             throw err;
           }
@@ -243,9 +332,6 @@ ${memoryContext || 'No stored memories yet.'}`;
       }
     } else if (aiProvider === 'openai' && openaiClient) {
       try {
-        const searchRes = await memoryService.getMemories(userId, { limit: 5 });
-        const memoryContext = searchRes.memories.map((m) => `- ${m.content} [${m.category}]`).join('\n');
-        const systemPrompt = `You are JARVIS... \n\nUser Memories:\n${memoryContext}`;
         const completion = await openaiClient.chat.completions.create({
           model: env.OPENAI_MODEL || 'gpt-4o-mini',
           messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content }],
@@ -272,6 +358,8 @@ ${memoryContext || 'No stored memories yet.'}`;
     }
   }
 
+  const memoryIds = retrievedMemories.map((m) => m._id);
+
   const assistantMsg = await Message.create({
     conversation: conversation._id,
     user: userId,
@@ -280,16 +368,43 @@ ${memoryContext || 'No stored memories yet.'}`;
     language,
     inputSource: 'voice_or_text',
     toolCalls: toolResult ? [toolResult] : [],
+    memoriesUsed: memoryIds,
   });
 
   conversation.lastMessageAt = new Date();
   conversation.messageCount = (conversation.messageCount || 0) + 2;
+  if (memoryIds.length > 0) {
+    const combinedMemories = new Set([
+      ...(conversation.memoriesUsed || []).map(String),
+      ...memoryIds.map(String),
+    ]);
+    conversation.memoriesUsed = Array.from(combinedMemories);
+  }
   await conversation.save();
+
+  // Asynchronously extract and save useful long-term memories in background
+  const geminiKey = env.GOOGLE_AI_API_KEY;
+  setTimeout(async () => {
+    try {
+      await memoryService.extractAndSaveMemoriesFromConversation(
+        userId,
+        conversation._id,
+        content,
+        assistantReply,
+        geminiKey
+          ? (p) => generateGeminiContent('gemini-3.5-flash-lite', 'You are a JSON memory extractor.', p, geminiKey)
+          : null
+      );
+    } catch (extractErr) {
+      logger.warn(`Async background memory extraction error: ${extractErr.message}`);
+    }
+  }, 0);
 
   return {
     conversationId: conversation._id,
     message: assistantReply,
     language,
+    memoriesUsed: memoryIds,
     taskExecution,
     steps: taskSteps,
     createdAt: assistantMsg.createdAt,
@@ -329,4 +444,4 @@ const executeLocalIntent = async (userId, intent, rawText, lang) => {
   throw new Error(`Local action not supported for intent: ${intent.type}`);
 };
 
-module.exports = { handleMessage, detectLanguage, parseIntent, generateGeminiContent };
+module.exports = { handleMessage, detectLanguage, parseIntent, generateGeminiContent, detectTopic };

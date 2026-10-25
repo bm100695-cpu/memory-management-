@@ -90,8 +90,8 @@ export default function DashboardPage() {
           <>
             <StatCard icon={CheckCircle} label="Completed Today" value={stats?.completedCount ?? 0} color="#10b981" />
             <StatCard icon={Clock} label="Pending" value={stats?.pendingCount ?? 0} color="#f59e0b" />
-            <StatCard icon={TrendingUp} label="In Progress" value={stats?.inProgressCount ?? 0} color="#3b82f6" />
-            <StatCard icon={Zap} label="Completion %" value={`${stats?.completionPercentage ?? 0}%`} color="#a78bfa" />
+            <StatCard icon={TrendingUp} label="In Progress" value={stats?.inProgressCount ?? 0} color="#2563eb" />
+            <StatCard icon={Zap} label="Completion %" value={`${stats?.completionPercentage ?? 0}%`} color="#2563eb" />
           </>
         )}
       </div>
@@ -152,7 +152,7 @@ export default function DashboardPage() {
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
               >
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa' }}>
+                  style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
                   <Icon size={16} />
                 </div>
                 <div>

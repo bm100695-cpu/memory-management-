@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
-import { Brain, Mail, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Sparkles, Shield, Cpu, Zap, Mic, Brain } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
+import MemoryManagementLogo from '../components/MemoryManagementLogo';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function LoginPage() {
   });
 
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  const googleBtnContainerRef = React.useRef(null);
+  const googleBtnContainerRef = useRef(null);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -49,8 +50,7 @@ export default function LoginPage() {
               toast.success('Signed in with Google!');
               navigate('/');
             } catch (err) {
-              const msg =
-                err.response?.data?.message || err.message || 'Google Sign-In failed.';
+              const msg = err.response?.data?.message || err.message || 'Google Sign-In failed.';
               setErrorMessage(msg);
               toast.error(msg);
             } finally {
@@ -106,11 +106,17 @@ export default function LoginPage() {
     toast.error('Google Identity Services is still loading. Please try again.');
   };
 
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    toast('Password reset feature is being emailed. Contact admin if you need immediate access.', {
+      icon: '🔑',
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Frontend validations
     const email = form.email.trim();
     const password = form.password;
 
@@ -165,62 +171,177 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4 relative"
-      style={{ background: 'var(--bg-primary)' }}
-    >
-      {/* Top right theme switcher (White / Night) */}
-      <div className="absolute top-4 right-4 z-20">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row overflow-hidden relative">
+      <style>{`
+        @keyframes radar-pulse {
+          0% { transform: scale(0.95); opacity: 0.5; }
+          50% { transform: scale(1.05); opacity: 0.9; }
+          100% { transform: scale(0.95); opacity: 0.5; }
+        }
+        @keyframes orbit-cw {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes orbit-ccw {
+          from { transform: rotate(360deg); }
+          to { transform: rotate(0deg); }
+        }
+        @keyframes ping-slow {
+          0% { transform: scale(0.8); opacity: 0.8; }
+          100% { transform: scale(2.4); opacity: 0; }
+        }
+        .radar-pulse-anim {
+          animation: radar-pulse 4s ease-in-out infinite;
+        }
+        .orbit-cw-anim {
+          animation: orbit-cw 22s linear infinite;
+        }
+        .orbit-ccw-anim {
+          animation: orbit-ccw 32s linear infinite;
+        }
+        .ping-slow-anim {
+          animation: ping-slow 3s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+      `}</style>
+
+      {/* Top right floating theme switcher */}
+      <div className="absolute top-4 right-4 z-30">
         <ThemeToggle variant="segmented" />
       </div>
 
-      {/* Subtle background glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl"
-          style={{ background: 'var(--accent-primary)' }}
-        />
-        <div
-          className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full opacity-10 blur-3xl"
-          style={{ background: '#60a5fa' }}
-        />
-      </div>
+      {/* ──────────────────────────────────────────────────────────── */}
+      {/* LEFT PANEL: High-Tech Jarvis Orbital Radar & Neural Branding */}
+      {/* ──────────────────────────────────────────────────────────── */}
+      <div
+        className="w-full lg:w-[48%] flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative overflow-hidden select-none"
+        style={{
+          background: 'linear-gradient(145deg, #060b18 0%, #0a1329 50%, #080f21 100%)',
+          color: '#ffffff',
+        }}
+      >
+        {/* Subtle ambient background glow */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-cyan-500/10 blur-[100px] pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-purple-600/15 blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-md relative animate-fade-in">
-        {/* Logo and Brand */}
-        <div className="text-center mb-8">
-          <div
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 animate-pulse-glow"
-            style={{
-              background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
-            }}
-          >
-            <Brain size={32} className="text-white" />
+        {/* Top Branding */}
+        <div className="relative z-10 flex items-center justify-between">
+          <MemoryManagementLogo size={42} showText textClassName="text-white" />
+
+          <div className="text-[11px] font-mono tracking-widest text-cyan-400/70 uppercase hidden sm:flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            SYS // ONLINE
           </div>
-          <h1 className="text-3xl font-bold gradient-text">JARVIS</h1>
-          <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            Your Personal AI Agent
-          </p>
         </div>
 
-        {/* Auth Card */}
-        <div className="card">
-          {/* Continue with Google Button */}
+        {/* Central Animated Radar / Orbital Core with Memory Chip Center */}
+        <div className="relative z-10 flex-1 flex items-center justify-center my-8 py-6">
+          <div className="relative w-72 h-72 sm:w-96 sm:h-96 flex items-center justify-center">
+            {/* Outermost dotted orbit */}
+            <div
+              className="absolute inset-0 rounded-full border border-dashed border-cyan-500/20 orbit-cw-anim"
+              style={{ borderSpacing: '6px' }}
+            >
+              {/* Orbital Satellite 1 */}
+              <div className="absolute top-4 left-1/4 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+            </div>
+
+            {/* Middle Thin Solid Orbit */}
+            <div className="absolute inset-8 sm:inset-10 rounded-full border border-cyan-500/30 orbit-ccw-anim">
+              {/* Orbital Satellite 2 */}
+              <div className="absolute bottom-6 right-10 w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_12px_#f59e0b]" />
+              {/* Coordinate notch */}
+              <div className="absolute top-1/2 -left-1 w-2 h-0.5 bg-cyan-400/80" />
+              <div className="absolute top-1/2 -right-1 w-2 h-0.5 bg-cyan-400/80" />
+            </div>
+
+            {/* Inner Ring (Pulsing) */}
+            <div className="absolute inset-20 sm:inset-24 rounded-full border border-cyan-400/40 radar-pulse-anim">
+              <div className="absolute top-3 right-6 w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_6px_#67e8f9]" />
+            </div>
+
+            {/* Central Memory Chip Core */}
+            <div className="relative flex items-center justify-center">
+              {/* Expanding acoustic wave ping */}
+              <div className="absolute w-20 h-20 rounded-full bg-cyan-400/25 ping-slow-anim" />
+
+              {/* Glowing Aura */}
+              <div className="absolute w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-500 to-amber-500 blur-lg opacity-70" />
+
+              {/* Memory Chip */}
+              <div className="relative z-10 drop-shadow-[0_0_20px_rgba(28,93,153,0.8)]">
+                <MemoryManagementLogo size={68} />
+              </div>
+            </div>
+
+            {/* Decorative crosshairs / axis lines */}
+            <div className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent pointer-events-none" />
+            <div className="absolute h-full w-[1px] bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent pointer-events-none" />
+          </div>
+        </div>
+
+        {/* Bottom Hero Copy */}
+        <div className="relative z-10 flex flex-col gap-3">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+            One assistant that <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-300 to-amber-300">
+              remembers your day.
+            </span>
+          </h2>
+          <p className="text-sm sm:text-base text-slate-300 max-w-md leading-relaxed">
+            Talk to it, give it tasks, and pick up where you left off.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-2 pt-2 text-[11px] font-medium text-slate-400">
+            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-1.5">
+              <Mic size={12} className="text-cyan-400" /> Voice & Continuous Audio
+            </span>
+            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-1.5">
+              <Brain size={12} className="text-purple-400" /> Connected Memory
+            </span>
+            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-1.5">
+              <Zap size={12} className="text-amber-400" /> Autonomous Browser
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ──────────────────────────────────────────────────────────── */}
+      {/* RIGHT PANEL: Modern Seamless Authentication Form             */}
+      {/* ──────────────────────────────────────────────────────────── */}
+      <div
+        className="w-full lg:w-[52%] flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative overflow-y-auto"
+        style={{
+          background: 'var(--bg-secondary)',
+          color: 'var(--text-primary)',
+        }}
+      >
+        <div className="w-full max-w-md mx-auto my-auto flex flex-col gap-6 animate-fade-in">
+          {/* Header */}
+          <div className="flex flex-col gap-2">
+            <div className="lg:hidden mb-2">
+              <MemoryManagementLogo size={36} showText />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+              {isRegister ? 'Create an account' : 'Welcome back'}
+            </h1>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              {isRegister
+                ? 'Sign up to start with Memory Management.'
+                : 'Sign in to continue with Memory Management.'}
+            </p>
+          </div>
+
+          {/* Continue with Google SSO Button */}
           <button
             type="button"
             onClick={handleGoogleClick}
             disabled={loading}
-            className={`w-full mb-3 py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-3 transition-all duration-200 border shadow-sm ${
-              !googleClientId
-                ? 'opacity-70 cursor-not-allowed'
-                : 'cursor-pointer hover:opacity-90'
-            }`}
+            className="w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-3 transition-all duration-200 border cursor-pointer shadow-sm hover:opacity-95"
             style={{
-              background: 'var(--bg-secondary)',
+              background: 'var(--bg-card)',
               borderColor: 'var(--border-subtle)',
               color: 'var(--text-primary)',
             }}
-            title={!googleClientId ? 'Google OAuth is not configured in .env' : 'Sign in with Google'}
           >
             <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
               <path
@@ -246,82 +367,90 @@ export default function LoginPage() {
           {/* Hidden container for GIS button rendering */}
           <div ref={googleBtnContainerRef} style={{ display: 'none' }} aria-hidden="true" />
 
-          {/* Missing Google OAuth Setup Notice */}
-          {!googleClientId && (
-            <div className="mb-4 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-              <span>Google Sign-In is not configured (missing <code>VITE_GOOGLE_CLIENT_ID</code>)</span>
-            </div>
-          )}
-
           {/* Divider */}
-          <div className="flex items-center gap-3 mb-5">
+          <div className="flex items-center gap-3 my-1">
             <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
-            <span className="text-xs uppercase" style={{ color: 'var(--text-muted)' }}>
-              Or with email & password
+            <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+              or use your email
             </span>
             <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
           </div>
 
-          {/* Login / Register Tab Switcher */}
+          {/* Tabs: Log in / Create account */}
           <div
-            className="flex rounded-xl overflow-hidden mb-6 p-1 border"
-            style={{
-              background: 'var(--bg-secondary)',
-              borderColor: 'var(--border-subtle)',
-            }}
+            className="flex border-b"
+            style={{ borderColor: 'var(--border-subtle)' }}
           >
-            {['Login', 'Register'].map((tab) => {
-              const active = (isRegister ? 'Register' : 'Login') === tab;
-              return (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => {
-                    setIsRegister(tab === 'Register');
-                    setErrorMessage('');
-                  }}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
-                    active ? 'shadow-sm' : 'hover:opacity-80'
-                  }`}
-                  style={
-                    active
-                      ? {
-                          background:
-                            'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
-                          color: '#ffffff',
-                        }
-                      : { color: 'var(--text-secondary)' }
-                  }
-                >
-                  {tab}
-                </button>
-              );
-            })}
+            <button
+              type="button"
+              onClick={() => {
+                setIsRegister(false);
+                setErrorMessage('');
+              }}
+              className={`pb-2.5 text-sm font-semibold transition-all relative mr-6 cursor-pointer ${
+                !isRegister ? 'font-bold' : 'hover:opacity-80'
+              }`}
+              style={{
+                color: !isRegister ? 'var(--text-primary)' : 'var(--text-muted)',
+              }}
+            >
+              Log in
+              {!isRegister && (
+                <span
+                  className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                  style={{ background: 'var(--text-primary)' }}
+                />
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsRegister(true);
+                setErrorMessage('');
+              }}
+              className={`pb-2.5 text-sm font-semibold transition-all relative cursor-pointer ${
+                isRegister ? 'font-bold' : 'hover:opacity-80'
+              }`}
+              style={{
+                color: isRegister ? 'var(--text-primary)' : 'var(--text-muted)',
+              }}
+            >
+              Create account
+              {isRegister && (
+                <span
+                  className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                  style={{ background: 'var(--text-primary)' }}
+                />
+              )}
+            </button>
           </div>
 
           {/* Error Banner */}
           {errorMessage && (
-            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
-          {/* Login / Register Form */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {isRegister && (
-              <div className="input-group">
-                <label className="input-label">Full Name</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                  Full Name
+                </label>
                 <div className="relative">
                   <User
                     size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2"
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2"
                     style={{ color: 'var(--text-muted)' }}
                   />
                   <input
-                    className="input pl-9"
-                    placeholder="Your name"
+                    type="text"
+                    className="input pl-10"
+                    placeholder="e.g. Tony Stark"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     required={isRegister}
@@ -330,17 +459,19 @@ export default function LoginPage() {
               </div>
             )}
 
-            <div className="input-group">
-              <label className="input-label">Email</label>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                Email
+              </label>
               <div className="relative">
                 <Mail
                   size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2"
                   style={{ color: 'var(--text-muted)' }}
                 />
                 <input
                   type="email"
-                  className="input pl-9"
+                  className="input pl-10"
                   placeholder="you@example.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -349,20 +480,32 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="input-group">
-              <label className="input-label">Password</label>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                  Password
+                </label>
+                {!isRegister && (
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="text-xs hover:underline cursor-pointer"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <div className="relative">
                 <Lock
                   size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2"
                   style={{ color: 'var(--text-muted)' }}
                 />
                 <input
                   type={showPass ? 'text' : 'password'}
-                  className="input pl-9 pr-10"
-                  placeholder={
-                    isRegister ? 'Min 8 chars, 1 uppercase, 1 number' : 'Your password'
-                  }
+                  className="input pl-10 pr-16"
+                  placeholder={isRegister ? 'At least 8 characters (1 uppercase, 1 digit)' : 'At least 8 characters'}
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   required
@@ -370,42 +513,47 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 cursor-pointer"
-                  style={{ color: 'var(--text-muted)' }}
-                  aria-label={showPass ? 'Hide password' : 'Show password'}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold hover:opacity-80 cursor-pointer"
+                  style={{ color: 'var(--text-secondary)' }}
                 >
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPass ? 'Hide' : 'Show'}
                 </button>
               </div>
             </div>
 
             {isRegister && (
-              <div className="input-group">
-                <label className="input-label">Preferred Language</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                  Preferred Language
+                </label>
                 <select
                   className="input"
                   value={form.preferredLanguage}
-                  onChange={(e) =>
-                    setForm({ ...form, preferredLanguage: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, preferredLanguage: e.target.value })}
                 >
+                  <option value="hinglish">Hinglish (हिंदी + English)</option>
                   <option value="en">English</option>
-                  <option value="hi">Hindi</option>
-                  <option value="hinglish">Hinglish</option>
+                  <option value="hi">Hindi (हिंदी)</option>
                 </select>
               </div>
             )}
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary justify-center mt-2 py-3"
+              className="mt-2 w-full py-3.5 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 shadow-md"
+              style={{
+                background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+                color: '#ffffff',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
             >
               {loading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>{isRegister ? 'Create Account' : 'Sign In'}</span>
+                  <span>{isRegister ? 'Create account' : 'Sign in'}</span>
                   <ArrowRight size={16} />
                 </>
               )}
@@ -413,9 +561,10 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-xs mt-4" style={{ color: 'var(--text-muted)' }}>
-          Your personal AI agent — voice, memory, tasks, and more.
-        </p>
+        {/* Footer info note */}
+        <div className="w-full max-w-md mx-auto pt-6 text-center text-xs" style={{ color: 'var(--text-muted)' }}>
+          Voice, memory and tasks, all in one place.
+        </div>
       </div>
     </div>
   );

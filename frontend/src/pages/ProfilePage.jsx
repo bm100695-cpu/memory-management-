@@ -75,15 +75,15 @@ export default function ProfilePage() {
     <div className="flex-1 overflow-y-auto p-8 max-w-4xl mx-auto w-full">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-            <User className="w-7 h-7 text-purple-400" />
+          <h1 className="text-2xl font-bold text-[#202123] flex items-center gap-3">
+            <User className="w-7 h-7 text-[#2563EB]" />
             Personal Profile & Form Autofill
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Store your personal details once. Used by JARVIS and the Chrome Extension for 1-click form filling.
+          <p className="text-sm text-[#6B7280] mt-1">
+            Store your personal details once. Used for 1-click form filling and profile management.
           </p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
           <Shield className="w-3.5 h-3.5" />
           Encrypted Locally
         </div>
@@ -92,8 +92,8 @@ export default function ProfilePage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <div className="card">
-          <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
-            <User className="w-4 h-4 text-purple-400" /> Basic Details
+          <h2 className="text-base font-semibold text-[#202123] mb-4 flex items-center gap-2">
+            <User className="w-4 h-4 text-[#2563EB]" /> Basic Details
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -143,8 +143,8 @@ export default function ProfilePage() {
 
         {/* Address */}
         <div className="card">
-          <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-blue-400" /> Address Details
+          <h2 className="text-base font-semibold text-[#202123] mb-4 flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-[#2563EB]" /> Address Details
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
@@ -211,8 +211,8 @@ export default function ProfilePage() {
 
         {/* Professional */}
         <div className="card">
-          <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
-            <Briefcase className="w-4 h-4 text-emerald-400" /> Professional Details
+          <h2 className="text-base font-semibold text-[#202123] mb-4 flex items-center gap-2">
+            <Briefcase className="w-4 h-4 text-[#2563EB]" /> Professional Details
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

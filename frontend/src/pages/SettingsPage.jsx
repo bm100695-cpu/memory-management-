@@ -51,7 +51,7 @@ export default function SettingsPage() {
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `jarvis-backup-${new Date().toISOString().slice(0, 10)}.json`);
+      link.setAttribute('download', `memory-management-backup-${new Date().toISOString().slice(0, 10)}.json`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -68,11 +68,11 @@ export default function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
-          <ShieldCheck className="w-7 h-7 text-purple-400" />
+          <ShieldCheck className="w-7 h-7 text-[#2563EB]" />
           Settings, Privacy & Appearance
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-          Choose your UI theme (White or Night mode), configure AI engine, voice parameters, and export your personal data.
+          Choose your UI theme, configure AI engine, voice parameters, and export your personal data.
         </p>
       </div>
 
@@ -80,7 +80,7 @@ export default function SettingsPage() {
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <Palette className="w-4 h-4 text-purple-400" />
+            <Palette className="w-4 h-4 text-[#2563EB]" />
             UI Appearance: White or Night Mode
           </h2>
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -88,7 +88,7 @@ export default function SettingsPage() {
           </span>
         </div>
         <p className="text-xs mb-5" style={{ color: 'var(--text-secondary)' }}>
-          Click "White" to make the entire UI crisp white and clean, or click "Night" for a futuristic deep-dark mode.
+          Click "White" to make the entire UI crisp white and clean, or click "Night" for dark mode.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -101,17 +101,17 @@ export default function SettingsPage() {
             }}
             className={`p-5 rounded-2xl border text-left transition-all duration-200 cursor-pointer relative ${
               theme === 'light'
-                ? 'ring-2 ring-purple-500 shadow-md'
-                : 'hover:border-purple-400/50'
+                ? 'ring-2 ring-[#2563EB] shadow-md'
+                : 'hover:border-[#2563EB]/50'
             }`}
             style={{
               background: theme === 'light' ? '#ffffff' : 'var(--bg-secondary)',
               borderColor: theme === 'light' ? 'var(--accent-primary)' : 'var(--border-subtle)',
-              boxShadow: theme === 'light' ? '0 4px 20px rgba(124, 58, 237, 0.15)' : 'none',
+              boxShadow: theme === 'light' ? '0 4px 14px rgba(37, 99, 235, 0.12)' : 'none',
             }}
           >
             {theme === 'light' && (
-              <span className="absolute top-4 right-4 badge badge-purple">
+              <span className="absolute top-4 right-4 badge badge-blue">
                 <CheckCircle className="w-3 h-3" /> Active
               </span>
             )}
@@ -120,22 +120,22 @@ export default function SettingsPage() {
                 <Sun className="w-5 h-5 fill-amber-500" />
               </div>
               <div>
-                <div className="font-bold text-sm" style={{ color: theme === 'light' ? '#0f172a' : 'var(--text-primary)' }}>
-                  ☀️ White Mode
+                <div className="font-bold text-sm" style={{ color: theme === 'light' ? '#202123' : 'var(--text-primary)' }}>
+                  ☀️ White Mode (ChatGPT Inspired)
                 </div>
-                <div className="text-xs" style={{ color: theme === 'light' ? '#64748b' : 'var(--text-muted)' }}>
-                  Clean, bright & daytime UI
+                <div className="text-xs" style={{ color: theme === 'light' ? '#6B7280' : 'var(--text-muted)' }}>
+                  Crisp white, light-gray sidebar & blue accents
                 </div>
               </div>
             </div>
             {/* Visual mini-preview */}
-            <div className="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-700">
+            <div className="p-3 rounded-xl border border-slate-200 bg-[#F7F7F8] flex items-center justify-between text-xs text-slate-700">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-purple-600" />
-                <span className="font-semibold text-slate-800">White Background</span>
+                <div className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
+                <span className="font-semibold text-[#202123]">White Background</span>
               </div>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-700">
-                Crisp
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800">
+                Active Default
               </span>
             </div>
           </button>
@@ -217,7 +217,7 @@ export default function SettingsPage() {
       {/* Voice & Language Preferences */}
       <div className="card">
         <h2 className="text-base font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-          <Volume2 className="w-4 h-4 text-purple-400" /> Voice & Speech Preferences
+          <Volume2 className="w-4 h-4 text-[#2563EB]" /> Voice & Speech Preferences
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -246,16 +246,11 @@ export default function SettingsPage() {
       </div>
 
       {/* Data Ownership & Export */}
-      <div className="card border-purple-500/20"
-        style={{
-          background: theme === 'light'
-            ? 'linear-gradient(135deg, rgba(124, 58, 237, 0.05), #ffffff)'
-            : 'linear-gradient(135deg, rgba(88, 28, 135, 0.2), transparent)',
-        }}>
+      <div className="card border-[#E5E7EB] bg-blue-50/25">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="text-base font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-              <Download className="w-4 h-4 text-purple-400" /> Export Your Complete Data
+              <Download className="w-4 h-4 text-[#2563EB]" /> Export Your Complete Data
             </h2>
             <p className="text-xs mt-1 max-w-xl" style={{ color: 'var(--text-secondary)' }}>
               100% Data Sovereignty: Download your tasks, long-term memories, daily journal summaries, conversation logs, and profile info into an encrypted JSON file anytime.

@@ -87,7 +87,7 @@ export default function ResearchPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
-            <BookOpen className="w-7 h-7 text-indigo-400" />
+            <BookOpen className="w-7 h-7 text-[#2563EB]" />
             Research Library
           </h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
@@ -125,7 +125,7 @@ export default function ResearchPage() {
             <button
               onClick={() => setSelectedTag('')}
               className={`badge cursor-pointer ${
-                selectedTag === '' ? 'badge-purple' : 'badge-gray'
+                selectedTag === '' ? 'badge-blue' : 'badge-gray'
               }`}
             >
               All
@@ -135,7 +135,7 @@ export default function ResearchPage() {
                 key={tag}
                 onClick={() => setSelectedTag(tag === selectedTag ? '' : tag)}
                 className={`badge cursor-pointer ${
-                  selectedTag === tag ? 'badge-purple' : 'badge-gray'
+                  selectedTag === tag ? 'badge-blue' : 'badge-gray'
                 }`}
               >
                 #{tag}
@@ -155,7 +155,7 @@ export default function ResearchPage() {
           <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
           <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>No research saved yet</h3>
           <p className="text-sm max-w-sm mx-auto mt-1 mb-4" style={{ color: 'var(--text-secondary)' }}>
-            Collect documentation, tech articles, or notes you want JARVIS to reference.
+            Collect documentation, tech articles, or notes you want to reference.
           </p>
           <button onClick={() => setModalOpen(true)} className="btn-primary mx-auto">
             <Plus className="w-4 h-4" /> Add First Research Item
@@ -194,31 +194,31 @@ export default function ResearchPage() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-indigo-400 hover:underline block truncate mb-3"
+                  className="text-xs text-[#2563EB] hover:underline block truncate mb-3"
                 >
                   {item.url}
                 </a>
 
                 {item.notes && (
-                  <p className="text-sm text-slate-300 bg-black/20 p-3 rounded-lg mb-3 whitespace-pre-wrap">
+                  <p className="text-sm text-[#202123] bg-[#F0F1F3] p-3 rounded-xl mb-3 whitespace-pre-wrap border border-[#E5E7EB]">
                     {item.notes}
                   </p>
                 )}
 
                 {item.summary && (
-                  <div className="bg-purple-500/10 border border-purple-500/20 p-3 rounded-lg mb-3">
-                    <div className="flex items-center gap-1.5 text-xs text-purple-300 font-medium mb-1">
+                  <div className="bg-blue-50/60 border border-blue-200 p-3 rounded-xl mb-3">
+                    <div className="flex items-center gap-1.5 text-xs text-[#2563EB] font-medium mb-1">
                       <Sparkles className="w-3.5 h-3.5" /> AI Summary
                     </div>
-                    <p className="text-xs text-slate-300">{item.summary}</p>
+                    <p className="text-xs text-[#202123]">{item.summary}</p>
                   </div>
                 )}
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-white/5 text-xs text-slate-500">
+              <div className="flex items-center justify-between pt-3 border-t border-[#E5E7EB] text-xs text-slate-500">
                 <div className="flex flex-wrap gap-1">
                   {(item.tags || []).map((t) => (
-                    <span key={t} className="badge badge-purple">
+                    <span key={t} className="badge badge-gray">
                       #{t}
                     </span>
                   ))}
@@ -232,12 +232,13 @@ export default function ResearchPage() {
 
       {/* Add Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-          style={{ background: 'var(--modal-overlay)' }}>
-          <div className="card max-w-lg w-full p-6 animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs animate-fade-in"
+          style={{ background: 'rgba(32, 33, 35, 0.45)' }}>
+          <div className="card max-w-lg w-full p-6 animate-fade-in shadow-2xl border"
+            style={{ borderColor: 'var(--border-subtle)' }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                <BookOpen className="w-5 h-5 text-indigo-400" /> Save Research Item
+                <BookOpen className="w-5 h-5 text-[#2563EB]" /> Save Research Item
               </h2>
               <button onClick={() => setModalOpen(false)} className="btn-icon">
                 <X className="w-5 h-5 text-slate-400" />

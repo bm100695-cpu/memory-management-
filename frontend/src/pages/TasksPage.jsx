@@ -58,8 +58,8 @@ function TaskModal({ task, onClose, onSave }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.7)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+      style={{ background: 'rgba(32, 33, 35, 0.45)', backdropFilter: 'blur(3px)' }}>
       <div className="card w-full max-w-lg animate-fade-in">
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-semibold text-lg">{task ? 'Edit Task' : 'New Task'}</h2>
@@ -192,7 +192,7 @@ export default function TasksPage() {
             { label: 'Done %', val: `${stats.completionPercentage}%` },
           ].map(({ label, val }) => (
             <div key={label} className="card-sm text-center">
-              <div className="text-xl font-bold gradient-text">{val}</div>
+              <div className="text-xl font-bold text-[#2563EB]">{val}</div>
               <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>{label}</div>
             </div>
           ))}
@@ -234,7 +234,7 @@ export default function TasksPage() {
           </div>
         ) : (
           tasks.map((task) => (
-            <div key={task._id} className="card-sm flex items-center gap-3 hover:border-purple-500/30 transition-colors">
+            <div key={task._id} className="card-sm flex items-center gap-3 hover:border-blue-400 transition-colors">
               <div className="flex-shrink-0">{STATUS_ICON[task.status]}</div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -246,7 +246,7 @@ export default function TasksPage() {
                     {task.status.replace('_', ' ')}
                   </span>
                   <span className={`badge ${PRIORITY_BADGE[task.priority]}`}>{task.priority}</span>
-                  <span className="badge badge-purple">{task.category}</span>
+                  <span className="badge badge-blue">{task.category}</span>
                 </div>
                 <div className="flex items-center gap-3 mt-0.5 text-xs" style={{ color: 'var(--text-muted)' }}>
                   <span className="flex items-center gap-1">

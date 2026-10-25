@@ -238,7 +238,7 @@ const handleSaveFollowUp = async (execution, instruction, lang) => {
   if (/daily task|task/i.test(lower)) {
     dailyTask = await DailyTask.create({
       user: execution.user,
-      title: `Apply to ${itemsToSave.length} verified opportunities from JARVIS search`,
+      title: `Apply to ${itemsToSave.length} verified opportunities from web search`,
       description: `Opportunities saved in Research Library from task: "${execution.title}"`,
       category: 'internship',
       status: 'planned',
@@ -579,7 +579,7 @@ const executeTaskStep = async (executionId, stepId, userId) => {
               url,
               title: title || pageData.title || url,
               summary: summaryResult.summary,
-              notes: `Researched via JARVIS command: "${execution.originalRequest}"`,
+              notes: `Researched via command: "${execution.originalRequest}"`,
               tags: ['web-research', 'autonomous-browser'],
               summaryIsAI: true,
             });

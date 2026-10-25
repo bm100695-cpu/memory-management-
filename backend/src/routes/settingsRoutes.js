@@ -51,7 +51,7 @@ router.get('/export', async (req, res, next) => {
     };
 
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename=jarvis-backup-${Date.now()}.json`);
+    res.setHeader('Content-Disposition', `attachment; filename=memory-management-backup-${Date.now()}.json`);
     res.send(JSON.stringify(backupData, null, 2));
   } catch (error) {
     next(error);

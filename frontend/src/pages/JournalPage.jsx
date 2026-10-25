@@ -100,7 +100,7 @@ export default function JournalPage() {
               { label: 'Done %', val: `${summary.stats.completionPercentage}%` },
             ].map(({ label, val }) => (
               <div key={label} className="card-sm text-center">
-                <div className="text-2xl font-bold gradient-text">{val}</div>
+                <div className="text-2xl font-bold text-[#2563EB]">{val}</div>
                 <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>{label}</div>
               </div>
             ))}
@@ -110,7 +110,7 @@ export default function JournalPage() {
           {summary.narrativeSummary && (
             <div className="card">
               <h2 className="font-semibold mb-3 flex items-center gap-2">
-                <Sparkles size={16} style={{ color: 'var(--accent-secondary)' }} />
+                <Sparkles size={16} className="text-[#2563EB]" />
                 Summary
               </h2>
               <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed"
@@ -123,7 +123,7 @@ export default function JournalPage() {
           {/* Task sections */}
           {[
             { title: '✅ Completed', tasks: summary.completedTasks, color: '#10b981' },
-            { title: '🔄 In Progress', tasks: summary.inProgressTasks, color: '#3b82f6' },
+            { title: '🔄 In Progress', tasks: summary.inProgressTasks, color: '#2563eb' },
             { title: '⏳ Pending', tasks: summary.pendingTasks, color: '#f59e0b' },
           ].map(({ title, tasks, color }) =>
             tasks?.length > 0 ? (
@@ -145,13 +145,13 @@ export default function JournalPage() {
 
           {/* Suggested tomorrow */}
           {summary.suggestedTomorrow?.length > 0 && (
-            <div className="card" style={{ borderColor: 'var(--border-accent)' }}>
+            <div className="card" style={{ borderColor: 'var(--border-subtle)' }}>
               <h2 className="font-semibold mb-3">💡 Suggested for Tomorrow</h2>
               <p className="text-xs mb-3 badge badge-yellow">AI suggestions — not confirmed tasks</p>
               <div className="flex flex-col gap-2">
                 {summary.suggestedTomorrow.map((s, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#a78bfa' }} />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#2563EB]" />
                     <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{s}</span>
                   </div>
                 ))}
