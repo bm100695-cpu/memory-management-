@@ -24,7 +24,9 @@ export default function LoginPage() {
     preferredLanguage: 'hinglish',
   });
 
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const googleClientId =
+    import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+    '780172743867-f28nep20u109mqeqdlu45sh3dkcrken9.apps.googleusercontent.com';
   const googleBtnContainerRef = useRef(null);
 
   // Redirect if already authenticated
