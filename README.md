@@ -1,6 +1,6 @@
 # 🧠 Memory Management — Personal AI Agent
 
-A voice-first, full-stack personal AI assistant and memory management system supporting Hindi, English, and Hinglish. Runs with intelligent persistent memory extraction, multi-session context continuity, daily task journaling, autonomous browser search & navigation, and a clean, modern UI inspired by ChatGPT's light theme.
+A voice-first, full-stack personal AI assistant and memory management system supporting Hindi, English, and Hinglish. Runs with intelligent persistent memory extraction, multi-session context continuity, daily task journaling, autonomous browser search & navigation.
 
 ---
 
@@ -9,7 +9,7 @@ A voice-first, full-stack personal AI assistant and memory management system sup
 | Layer | Technology |
 |-------|-----------|
 | Frontend | React + Vite + Tailwind CSS |
-| UI Design | ChatGPT-inspired Light Theme (with Night mode support) |
+| UI Design |
 | Backend | Node.js + Express |
 | Database | MongoDB Atlas + Mongoose |
 | AI Engines | Configurable LLM (OpenAI / Gemini / Local Rule Engine) |
@@ -72,9 +72,6 @@ memory-management/
   chrome-extension/  # Manifest V3 Chrome Extension
   .env.example
   .gitignore
-```
-
----
 
 ## ⚡ Quick Start
 
@@ -115,39 +112,9 @@ cd frontend && npm run dev
 
 - **Frontend:** http://localhost:5173  
 - **Backend API:** http://localhost:5000  
-
----
-
 ## 🧪 Testing
 
 ```bash
 # Run backend test suites (Memory extraction, security, sanitization)
 cd backend && npm test
 ```
-
----
-
-## 📋 Implementation Phases
-
-| Phase | Status | Description |
-|-------|--------|-------------|
-| 1 | ✅ Complete | Project structure, architecture, security baseline |
-| 2 | ✅ Complete | Authentication, JWT access & refresh tokens, password hashing, Google OAuth |
-| 3 | ✅ Complete | Daily tasks, CRUD, date-based work history, priority tracking |
-| 4 | ✅ Complete | Intelligent memory engine with auto-extraction, deduplication, and context grounding |
-| 5 | ✅ Complete | Continuous voice chat with Hindi, English, and Hinglish multi-lingual NLP |
-| 6 | ✅ Complete | Chrome Extension (Manifest V3) for browser form auto-filling |
-| 7 | ✅ Complete | Daily summary generator, cron scheduler, journal narrative |
-| 8 | ✅ Complete | Clean modern UI inspired by ChatGPT light theme + Night mode toggle |
-| 9 | ✅ Complete | Security, secret sanitizer, GDPR full JSON export, tamper-evident audit logging |
-| 10 | ✅ Complete | Production bundle verified, test suite passing, and complete documentation |
-
----
-
-## 🔒 Security & Privacy
-
-- Never commit `.env` files.
-- Sensitive credentials (passwords, API keys, MongoDB URIs) are sanitized before memory persistence.
-- JWT tokens use httpOnly cookies for refresh.
-- Rate limiting and input validation applied across all API endpoints.
-- User memory and task data is strictly isolated by authenticated user ID.
