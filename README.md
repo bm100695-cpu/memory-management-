@@ -1,4 +1,4 @@
-# 🧠 Memory Management — Personal AI Agent
+# 🧠 Memory Management 
 
 A voice-first, full-stack personal AI assistant and memory management system supporting Hindi, English, and Hinglish. Runs with intelligent persistent memory extraction, multi-session context continuity, daily task journaling, autonomous browser search & navigation.
 
