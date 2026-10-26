@@ -334,8 +334,8 @@ export default function LoginPage() {
               <div
                 className={`absolute w-20 h-20 rounded-full blur-lg opacity-70 ${
                   isDark
-                    ? 'bg-gradient-to-tr from-cyan-500 to-amber-500'
-                    : 'bg-gradient-to-tr from-blue-400 to-amber-300'
+                    ? 'bg-linear-to-tr from-cyan-500 to-amber-500'
+                    : 'bg-linear-to-tr from-blue-400 to-amber-300'
                 }`}
               />
 
@@ -353,17 +353,17 @@ export default function LoginPage() {
 
             {/* Decorative crosshairs / axis lines */}
             <div
-              className={`absolute w-full h-[1px] pointer-events-none ${
+              className={`absolute w-full h-px pointer-events-none ${
                 isDark
-                  ? 'bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent'
-                  : 'bg-gradient-to-r from-transparent via-blue-500/15 to-transparent'
+                  ? 'bg-linear-to-r from-transparent via-cyan-500/20 to-transparent'
+                  : 'bg-linear-to-r from-transparent via-blue-500/15 to-transparent'
               }`}
             />
             <div
-              className={`absolute h-full w-[1px] pointer-events-none ${
+              className={`absolute h-full w-px pointer-events-none ${
                 isDark
-                  ? 'bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent'
-                  : 'bg-gradient-to-b from-transparent via-blue-500/15 to-transparent'
+                  ? 'bg-linear-to-b from-transparent via-cyan-500/20 to-transparent'
+                  : 'bg-linear-to-b from-transparent via-blue-500/15 to-transparent'
               }`}
             />
           </div>
@@ -380,7 +380,7 @@ export default function LoginPage() {
             <span
               className={
                 isDark
-                  ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-300 to-amber-300'
+                  ? 'text-transparent bg-clip-text bg-linear-to-r from-cyan-300 via-sky-300 to-amber-300'
                   : 'text-[#2563EB]'
               }
             >

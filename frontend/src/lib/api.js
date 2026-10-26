@@ -1,20 +1,33 @@
+
 import axios from 'axios';
 
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl || envUrl === 'undefined' || envUrl === '') {
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return 'https://memory-management.onrender.com/api';
+    }
+    return '/api';
+  }
+  const clean = envUrl.trim().replace(/\/+$/, '');
+  return clean.endsWith('/api') ? clean : `${clean}/api`;
+};
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: getApiBaseUrl(),
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
 
-// Attach access token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
-// Handle token refresh on 401
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -30,7 +43,12 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config;
-    if (error.response?.status === 401 && !original._retry) {
+
+    if (
+      error.response?.status === 401 &&
+      !original._retry &&
+      !original.url?.includes('/auth/refresh')
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -46,12 +64,14 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+        const { data } = await api.post('/auth/refresh', {});
         const newToken = data.data.accessToken;
+
         localStorage.setItem('accessToken', newToken);
         api.defaults.headers.Authorization = `Bearer ${newToken}`;
         processQueue(null, newToken);
         original.headers.Authorization = `Bearer ${newToken}`;
+
         return api(original);
       } catch (refreshError) {
         processQueue(refreshError, null);
@@ -62,6 +82,7 @@ api.interceptors.response.use(
         isRefreshing = false;
       }
     }
+
     return Promise.reject(error);
   }
 );
